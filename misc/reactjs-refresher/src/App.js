@@ -12,10 +12,16 @@ const App = () => {
     { id: "cg3", text: "Help other students in the course Q&A" },
   ];
 
+  function newGoalHandler(newGoal) {
+    DUMMY_GOALS.push(newGoal);
+
+    console.log(DUMMY_GOALS);
+  }
+
   return (
     <div className="course-goals">
       <h2>Course Goals</h2>
-      <NewGoal />
+      <NewGoal onCreate={newGoalHandler} />
       <GoalList goals={DUMMY_GOALS} />
     </div>
   );
