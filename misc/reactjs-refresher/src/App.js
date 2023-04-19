@@ -15,7 +15,7 @@ const App = () => {
   const [goals, setGoals] = useState(DUMMY_GOALS);
 
   function newGoalHandler(newGoal) {
-    setGoals(goals.concat(newGoal));
+    setGoals((prevGoals) => prevGoals.concat(newGoal));
   }
 
   return (
