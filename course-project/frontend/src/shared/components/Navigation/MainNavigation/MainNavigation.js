@@ -11,24 +11,22 @@ import classes from "./MainNavigation.module.css";
 function MainNavigation(props) {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
 
-  function toggleDrawer() {
+  function toggleDrawerHandler() {
     setDrawerIsOpen(!drawerIsOpen);
   }
 
   return (
     <>
-      {drawerIsOpen && <Backdrop onClick={toggleDrawer} />}
-      {drawerIsOpen && (
-        <SideDrawer>
-          <nav className={classes["main-navigation__drawer-nav"]}>
-            <NavLinks />
-          </nav>
-        </SideDrawer>
-      )}
+      {drawerIsOpen && <Backdrop onClick={toggleDrawerHandler} />}
+      <SideDrawer show={drawerIsOpen} onClick={toggleDrawerHandler}>
+        <nav className={classes["main-navigation__drawer-nav"]}>
+          <NavLinks />
+        </nav>
+      </SideDrawer>
       <MainHeader>
         <button
           className={classes["main-navigation__menu-btn"]}
-          onClick={toggleDrawer}
+          onClick={toggleDrawerHandler}
         >
           <span />
           <span />
