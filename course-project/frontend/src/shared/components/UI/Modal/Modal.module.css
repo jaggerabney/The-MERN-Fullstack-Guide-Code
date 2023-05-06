@@ -21,11 +21,13 @@
 }
 
 .modal__content {
-  padding: 1rem 0.5rem;
+  padding: 0;
 }
 
 .modal__footer {
   padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 @media (min-width: 768px) {
