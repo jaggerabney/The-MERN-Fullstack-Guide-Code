@@ -13,3 +13,9 @@
 .authentication form {
   margin-bottom: 1rem;
 }
+
+.link {
+  color: #0000ee;
+  text-decoration: underline;
+  cursor: pointer;
+}

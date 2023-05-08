@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Card from "../../../shared/components/UI/Card/Card";
 import Input from "../../../shared/components/FormElements/Input/Input";
@@ -6,13 +6,16 @@ import Button from "../../../shared/components/FormElements/Button/Button";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
+  VALIDATOR_REQUIRE,
 } from "../../../shared/util/validators";
 import useForm from "../../../shared/hooks/form-hook";
 
 import classes from "./Auth.module.css";
 
 function Auth() {
-  const [formState, inputHandler] = useForm(
+  const [isLoginMode, setIsLoginMode] = useState(true);
+
+  const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
         value: "",
@@ -32,11 +35,47 @@ function Auth() {
     console.log(formState.inputs);
   }
 
+  function switchAuthModeHandler() {
+    if (!isLoginMode) {
+      setFormData(
+        {
+          ...formState.inputs,
+          name: undefined,
+        },
+        formState.inputs.email.isValid && formState.inputs.password.isValid
+      );
+    } else {
+      setFormData(
+        {
+          ...formState.inputs,
+          name: {
+            value: "",
+            isValid: false,
+          },
+        },
+        false
+      );
+    }
+
+    setIsLoginMode((prevState) => !prevState);
+  }
+
   return (
     <Card className={classes.authentication}>
-      <h2>Login</h2>
+      <h2>{isLoginMode ? "Login" : "Sign up"}</h2>
       <hr />
       <form onSubmit={submitHandler}>
+        {!isLoginMode && (
+          <Input
+            id="name"
+            element="input"
+            type="text"
+            label="Name"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter your name!"
+            onInput={inputHandler}
+          />
+        )}
         <Input
           id="email"
           element="input"
@@ -56,9 +95,16 @@ function Auth() {
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>
-          Login
+          {isLoginMode ? "Login" : "Sign up"}
         </Button>
       </form>
+      <p>
+        {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+
+        <span onClick={switchAuthModeHandler} className={classes.link}>
+          {isLoginMode ? "Sign up!" : "Login!"}
+        </span>
+      </p>
     </Card>
   );
 }
