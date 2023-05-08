@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 
-import { validate } from "../../util/validators";
+import { validate } from "../../../util/validators";
 
 import classes from "./Input.module.css";
 
@@ -24,8 +24,8 @@ function inputReducer(state, action) {
 
 function Input(props) {
   const [inputState, dispatchInput] = useReducer(inputReducer, {
-    value: props.value || "",
-    isValid: props.valid || false,
+    value: props.initValue || "",
+    isValid: props.initValid || false,
     isTouched: false,
   });
 
