@@ -15,8 +15,6 @@ function formReducer(state, action) {
       let formIsValid = true;
 
       for (const inputId in state.inputs) {
-        console.log(`${action.inputId}: ${action.isValid}`);
-
         if (inputId === action.inputId) {
           formIsValid = formIsValid && action.isValid;
         } else {
@@ -64,8 +62,14 @@ function NewPlace() {
     });
   });
 
+  function placeSubmitHandler(event) {
+    event.preventDefault();
+
+    console.log(formState.inputs);
+  }
+
   return (
-    <form className={classes["place-form"]}>
+    <form className={classes["place-form"]} onSubmit={placeSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -80,6 +84,14 @@ function NewPlace() {
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="At least five characters!"
+        onInput={inputHandler}
+      />
+      <Input
+        id="address"
+        element="input"
+        label="Address"
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText="Please enter a valid address!"
         onInput={inputHandler}
       />
       <Button type="submit" disabled={!formState.isValid}>
