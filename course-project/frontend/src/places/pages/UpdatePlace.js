@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input/Input";
@@ -42,18 +42,38 @@ const DUMMY_PLACES = [
 
 function UpdatePlace() {
   const placeId = useParams().placeId;
-  const placeInfo = DUMMY_PLACES.find((place) => place.id === placeId);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [formState, inputHandler] = useForm({
+  const [formState, inputHandler, setFormData] = useForm({
     title: {
-      value: placeInfo.title,
-      isValid: true,
+      value: "",
+      isValid: false,
     },
     description: {
-      value: placeInfo.description,
-      isValid: true,
+      value: "",
+      isValid: false,
     },
   });
+
+  const placeInfo = DUMMY_PLACES.find((place) => place.id === placeId);
+
+  useEffect(() => {
+    setFormData(
+      {
+        title: {
+          value: placeInfo.title,
+          isValid: true,
+        },
+        description: {
+          value: placeInfo.description,
+          isValid: true,
+        },
+      },
+      true
+    );
+
+    setIsLoading(false);
+  }, [setFormData, placeInfo]);
 
   if (!placeInfo) {
     return (
@@ -67,6 +87,14 @@ function UpdatePlace() {
     event.preventDefault();
 
     console.log(formState.inputs);
+  }
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <h2>Loading...</h2>
+      </div>
+    );
   }
 
   return (
