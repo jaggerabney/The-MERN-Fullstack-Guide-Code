@@ -10,6 +10,7 @@ import {
 } from "../../shared/util/validators";
 
 import classes from "./PlaceForm.module.css";
+import Card from "../../shared/components/UI/Card/Card";
 
 const DUMMY_PLACES = [
   {
@@ -58,19 +59,21 @@ function UpdatePlace() {
   const placeInfo = DUMMY_PLACES.find((place) => place.id === placeId);
 
   useEffect(() => {
-    setFormData(
-      {
-        title: {
-          value: placeInfo.title,
-          isValid: true,
+    if (placeInfo) {
+      setFormData(
+        {
+          title: {
+            value: placeInfo.title,
+            isValid: true,
+          },
+          description: {
+            value: placeInfo.description,
+            isValid: true,
+          },
         },
-        description: {
-          value: placeInfo.description,
-          isValid: true,
-        },
-      },
-      true
-    );
+        true
+      );
+    }
 
     setIsLoading(false);
   }, [setFormData, placeInfo]);
@@ -78,7 +81,9 @@ function UpdatePlace() {
   if (!placeInfo) {
     return (
       <div className="center">
-        <h2>Couldn't find place!</h2>
+        <Card>
+          <h2>Couldn't find place!</h2>
+        </Card>
       </div>
     );
   }
