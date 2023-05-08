@@ -9,9 +9,20 @@ import classes from "./PlaceItem.module.css";
 
 function PlaceItem(props) {
   const [showMap, setShowMap] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   function toggleMapHandler() {
     setShowMap(!showMap);
+  }
+
+  function toggleShowDeleteModalHandler() {
+    setShowDeleteModal(!showDeleteModal);
+  }
+
+  function deleteHandler() {
+    console.log("Deleting...");
+
+    setShowDeleteModal(false);
   }
 
   return (
@@ -28,6 +39,27 @@ function PlaceItem(props) {
           <Map center={props.coordinates} zoom={16} />
         </div>
       </Modal>
+      <Modal
+        show={showDeleteModal}
+        onCancel={toggleShowDeleteModalHandler}
+        header="Are you sure?"
+        footerClass="place-item__modal-actions"
+        footer={
+          <>
+            <Button onClick={toggleShowDeleteModalHandler} inverse>
+              Cancel
+            </Button>
+            <Button onClick={deleteHandler} danger>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p style={{ margin: "1rem" }}>
+          Are you sure you want to delete this place? This action cannot be
+          undone!
+        </p>
+      </Modal>
       <li className={classes["place-item"]}>
         <Card className={classes["place-item__content"]}>
           <div className={classes["place-item__image"]}>
@@ -43,7 +75,9 @@ function PlaceItem(props) {
               View on map
             </Button>
             <Button to={`/places/${props.id}`}>Edit</Button>
-            <Button danger>Delete</Button>
+            <Button onClick={toggleShowDeleteModalHandler} danger>
+              Delete
+            </Button>
           </div>
         </Card>
       </li>

@@ -39,6 +39,10 @@
   padding: 0;
 }
 
+.place-item__padded-modal-content {
+  padding: 1rem;
+}
+
 .place-item__modal-actions {
   text-align: right;
 }
