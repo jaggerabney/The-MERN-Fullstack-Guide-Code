@@ -1,11 +1,9 @@
-const fs = require("fs");
+const http = require("http");
 
-const userName = "Jagger";
+const server = http.createServer((req, res) => {
+  console.log(`Incoming request of type ${req.method} from ${req.url}`);
 
-fs.writeFile("user-data.txt", "Name: " + userName, (err) => {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  console.log("WROTE FILE");
+  res.end("<h1>Success!</h1>");
 });
+
+server.listen(5000);
