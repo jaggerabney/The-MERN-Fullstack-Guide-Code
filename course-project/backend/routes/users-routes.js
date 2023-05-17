@@ -1,5 +1,7 @@
 const express = require("express");
 
+const usersController = require("../controllers/users-controller");
+
 let dummyUsers = [
   {
     name: "Jagger",
@@ -15,8 +17,6 @@ let dummyUsers = [
 
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  res.status(200).json({ users: dummyUsers });
-});
+router.get("/", usersController.getUsers);
 
 module.exports = router;
