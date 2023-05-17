@@ -1,3 +1,7 @@
+const { v4: uuid } = require("uuid");
+
+const HttpError = require("../models/http-error");
+
 let dummyUsers = [
   {
     name: "Jagger",
@@ -19,7 +23,22 @@ function getUsers(req, res, next) {
 
 function signup(req, res, next) {
   const { name, email, password } = req.body;
-  const newUser = { name, email, password, loggedIn: false };
+  const userAlreadyExists = dummyUsers.find((user) => user.email == email);
+
+  if (userAlreadyExists) {
+    throw new HttpError(
+      "The provided email address already belongs to an account.",
+      422
+    );
+  }
+
+  const newUser = {
+    id: uuid(),
+    name,
+    email,
+    password,
+    loggedIn: false,
+  };
 
   dummyUsers.push(newUser);
 
@@ -28,16 +47,15 @@ function signup(req, res, next) {
 
 function login(req, res, next) {
   const { email, password } = req.body;
-  const targetUserIndex = dummyUsers.findIndex(
-    (user) => user.email === email && user.password === password
-  );
+  const targetUser = {
+    ...dummyUsers.find((user) => user.email === email),
+  };
 
-  const targetUser = { ...dummyUsers[targetUserIndex] };
-  targetUser.loggedIn = true;
+  if (!targetUser || targetUser.password !== password) {
+    throw new HttpError("Invalid email or password!", 401);
+  }
 
-  dummyUsers[targetUserIndex] = targetUser;
-
-  res.status(200).json({ user: targetUser });
+  res.status(200).json({ message: "Logged user in!" });
 }
 
 exports.getUsers = getUsers;
