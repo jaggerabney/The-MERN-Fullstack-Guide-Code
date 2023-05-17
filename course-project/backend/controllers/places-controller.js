@@ -2,6 +2,7 @@ const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const getCoordinatesFromAddress = require("../util/location");
 
 let DUMMY_PLACES = [
   {
@@ -41,16 +42,24 @@ function getPlacesByUserId(req, res, next) {
   res.json({ places });
 }
 
-function createPlace(req, res, next) {
+async function createPlace(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     console.log(errors);
 
-    throw new HttpError("Invalid information!", 422);
+    return next(new HttpError("Invalid information!", 422));
   }
 
-  const { title, description, coordinates, address, creator } = req.body;
+  const { title, description, address, creator } = req.body;
+  let coordinates;
+
+  try {
+    coordinates = await getCoordinatesFromAddress(address);
+  } catch (error) {
+    return next(error);
+  }
+
   const createdPlace = {
     id: uuid(),
     title,
@@ -71,7 +80,7 @@ function updatePlaceById(req, res, next) {
   if (!errors.isEmpty()) {
     console.log(errors);
 
-    throw new HttpError("Invalid information!", 422);
+    return next(new HttpError("Invalid information!", 422));
   }
 
   const { placeId } = req.params;
