@@ -19,10 +19,17 @@ const DUMMY_PLACES = [
 ];
 
 router.get("/:placeId", (req, res, next) => {
-  const placeId = req.params.placeId;
+  const { placeId } = req.params;
   const place = DUMMY_PLACES.find((place) => place.id === placeId);
 
   res.json({ place });
+});
+
+router.get("/user/:userId", (req, res, next) => {
+  const { userId } = req.params;
+  const places = DUMMY_PLACES.filter((place) => place.creator === userId);
+
+  res.json({ places });
 });
 
 module.exports = router;
