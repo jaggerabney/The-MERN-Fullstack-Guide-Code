@@ -56,6 +56,25 @@ function createPlace(req, res, next) {
   res.status(201).json({ place: createdPlace });
 }
 
+function updatePlaceById(req, res, next) {
+  const { placeId } = req.params;
+  const { title, description } = req.body;
+  const updatedPlace = {
+    ...DUMMY_PLACES.find((place) => place.id === placeId),
+    title,
+    description,
+  };
+  const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
+
+  updatedPlace.title = title;
+  updatedPlace.description = description;
+
+  DUMMY_PLACES[placeIndex] = updatedPlace;
+
+  res.status(200).json({ place: updatedPlace });
+}
+
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
+exports.updatePlaceById = updatePlaceById;
