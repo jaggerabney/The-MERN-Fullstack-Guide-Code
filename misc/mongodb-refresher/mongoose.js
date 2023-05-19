@@ -17,4 +17,11 @@ async function createProduct(req, res, next) {
   res.status(200).json(result);
 }
 
+async function getProducts(req, res, next) {
+  const products = await Product.find().exec();
+
+  res.status(200).json(products);
+}
+
 exports.createProduct = createProduct;
+exports.getProducts = getProducts;
