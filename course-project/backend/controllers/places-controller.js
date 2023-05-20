@@ -107,7 +107,7 @@ async function createPlace(req, res, next) {
   res.status(201).json({ place: createdPlace });
 }
 
-function updatePlaceById(req, res, next) {
+async function updatePlaceById(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -118,19 +118,28 @@ function updatePlaceById(req, res, next) {
 
   const { placeId } = req.params;
   const { title, description } = req.body;
-  const updatedPlace = {
-    ...DUMMY_PLACES.find((place) => place.id === placeId),
-    title,
-    description
-  };
-  const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
+  let place;
 
-  updatedPlace.title = title;
-  updatedPlace.description = description;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError("Couldn't find place!", 500);
 
-  DUMMY_PLACES[placeIndex] = updatedPlace;
+    return next(error);
+  }
 
-  res.status(200).json({ place: updatedPlace });
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();
+  } catch (err) {
+    const error = new HttpError("Couldn't save place!", 500);
+
+    return next(error);
+  }
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
 }
 
 function deletePlaceById(req, res, next) {
