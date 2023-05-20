@@ -21,15 +21,21 @@ let DUMMY_PLACES = [
   }
 ];
 
-function getPlaceById(req, res, next) {
+async function getPlaceById(req, res, next) {
   const { placeId } = req.params;
-  const place = DUMMY_PLACES.find((place) => place.id === placeId);
+  let place;
+
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    return next(error);
+  }
 
   if (!place) {
     throw new HttpError("Couldn't find a place for that ID!", 404);
   }
 
-  res.json({ place });
+  res.json({ place: place.toObject({ getters: true }) });
 }
 
 function getPlacesByUserId(req, res, next) {
