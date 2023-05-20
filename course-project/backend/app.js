@@ -31,5 +31,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(process.env.DB_CONNECTION_STRING)
-  .then(() => app.listen(5000))
+  .then(() => {
+    app.listen(5000);
+  })
   .catch((error) => console.log(error));

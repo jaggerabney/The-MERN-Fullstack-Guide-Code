@@ -1,6 +1,7 @@
 const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 
+const Place = require("../models/place");
 const HttpError = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
 
@@ -14,10 +15,10 @@ let DUMMY_PLACES = [
     address: "20 W 34th St, New York, NY 10001",
     location: {
       lat: 40.74861523068957,
-      lng: -73.98524597764153,
+      lng: -73.98524597764153
     },
-    creator: "u1",
-  },
+    creator: "u1"
+  }
 ];
 
 function getPlaceById(req, res, next) {
@@ -51,7 +52,7 @@ async function createPlace(req, res, next) {
     return next(new HttpError("Invalid information!", 422));
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address, image, creator } = req.body;
   let coordinates;
 
   try {
@@ -60,16 +61,20 @@ async function createPlace(req, res, next) {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
-    creator,
-  };
+    location: coordinates,
+    image,
+    creator
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  try {
+    await createdPlace.save();
+  } catch (error) {
+    return next(error);
+  }
 
   res.status(201).json({ place: createdPlace });
 }
@@ -88,7 +93,7 @@ function updatePlaceById(req, res, next) {
   const updatedPlace = {
     ...DUMMY_PLACES.find((place) => place.id === placeId),
     title,
-    description,
+    description
   };
   const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
 
