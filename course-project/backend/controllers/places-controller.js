@@ -156,10 +156,6 @@ async function deletePlaceById(req, res, next) {
   res.status(200).json({ message: "Deleted place!" });
 }
 
-function error(message, code) {
-  return new HttpError(message, code);
-}
-
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
