@@ -28,7 +28,7 @@ async function signup(req, res, next) {
     return next(error);
   }
 
-  const { name, email, password, image, places } = req.body;
+  const { name, email, password, image } = req.body;
   let existingUser;
 
   try {
@@ -55,7 +55,7 @@ async function signup(req, res, next) {
     email,
     password,
     image,
-    places
+    places: []
   });
 
   try {
