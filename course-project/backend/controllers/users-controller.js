@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 
-const HttpError = require("../models/http-error");
+const { error } = require("../models/http-error");
 const User = require("../models/user");
 
 async function getUsers(req, res, next) {
@@ -9,9 +9,7 @@ async function getUsers(req, res, next) {
   try {
     users = await User.find({}, "-password");
   } catch (err) {
-    const error = new HttpError("Couldn't retrieve users!", 500);
-
-    return next(error);
+    return next(error("Couldn't retrieve users!", 500));
   }
 
   res
@@ -23,9 +21,7 @@ async function signup(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const error = new HttpError("Invalid information!", 422);
-
-    return next(error);
+    return next(error("Invalid information!", 422));
   }
 
   const { name, email, password, image } = req.body;
@@ -34,20 +30,13 @@ async function signup(req, res, next) {
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    const error = new HttpError(
-      "Couldn't query database for the given email!",
-      500
-    );
-
-    return next(error);
+    return next(error("Couldn't query the database for the given email!", 500));
   }
 
   if (existingUser) {
-    const error = HttpError(
-      "The provided email already belongs to an account."
+    return next(
+      error("The provided email already belongs to an account.", 422)
     );
-
-    return next(error);
   }
 
   const createdUser = new User({
@@ -61,9 +50,7 @@ async function signup(req, res, next) {
   try {
     await createdUser.save();
   } catch (err) {
-    const error = new HttpError("Couldn't save user to database!", 500);
-
-    return next(error);
+    return next(error("Couldn't save user to database!", 500));
   }
 
   res.status(201).json({ user: createdUser.toObject({ getters: true }) });
@@ -76,15 +63,11 @@ async function login(req, res, next) {
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    const error = new HttpError("Couldn't query database!", 500);
-
-    return next(error);
+    return next(error("Couldn't query database!", 500));
   }
 
   if (!existingUser || existingUser.password !== password) {
-    const error = new HttpError("Username or password is incorrect!", 500);
-
-    return next(error);
+    return next(error(("Username or password is incorrect!", 500)));
   }
 
   res.status(200).json({ message: "Logged user in!" });

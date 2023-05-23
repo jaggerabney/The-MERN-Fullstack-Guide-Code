@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 
 const Place = require("../models/place");
 const User = require("../models/user");
-const HttpError = require("../models/http-error");
+const { error } = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
 
 async function getPlaceById(req, res, next) {
@@ -13,15 +13,11 @@ async function getPlaceById(req, res, next) {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
-    const error = new HttpError("Couldn't find a place for the given ID!", 404);
-
-    return next(error);
+    return next(error("Couldn't find a place for the given ID!", 404));
   }
 
   if (!place) {
-    const error = new HttpError("Couldn't find a place for the given ID!", 404);
-
-    return next(error);
+    return next(error("Couldn't find a place for the given ID!", 404));
   }
 
   res.json({ place: place.toObject({ getters: true }) });
@@ -32,23 +28,15 @@ async function getPlacesByUserId(req, res, next) {
   let places;
 
   try {
-    places = await Place.find({ creator: userId });
-  } catch (err) {
-    const error = new HttpError(
-      "Couldn't find places for the given user ID!",
-      404
-    );
+    const user = await User.findById(userId).populate("places");
 
-    return next(error);
+    places = user.places;
+  } catch (err) {
+    return next(error(("Couldn't find places for the given user ID!", 404)));
   }
 
   if (!places || places.length < 1) {
-    const error = new HttpError(
-      "Couldn't find places for the given user ID!",
-      404
-    );
-
-    return next(error);
+    return next(error(("Couldn't find places for the given user ID!", 404)));
   }
 
   res.json({
@@ -60,9 +48,7 @@ async function createPlace(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const error = new HttpError("Invalid information!", 422);
-
-    return next(error);
+    return next(error("Invalid information!", 422));
   }
 
   const { title, description, address, image, creator } = req.body;
@@ -86,15 +72,11 @@ async function createPlace(req, res, next) {
   try {
     user = await User.findById(creator);
   } catch (err) {
-    const error = new HttpError("Place creation failed!", 500);
-
-    return next(error);
+    return next(error("Place creation failed!", 500));
   }
 
   if (!user) {
-    const error = new HttpError("Couldn't find user for provided ID!", 404);
-
-    return next(error);
+    return next(error("Couldn't find user for provided ID!", 404));
   }
 
   try {
@@ -118,9 +100,7 @@ async function updatePlaceById(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log(errors);
-
-    return next(new HttpError("Invalid information!", 422));
+    return next(error("Invalid information!", 422));
   }
 
   const { placeId } = req.params;
@@ -130,9 +110,7 @@ async function updatePlaceById(req, res, next) {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
-    const error = new HttpError("Couldn't find place!", 500);
-
-    return next(error);
+    return next(error("Couldn't find place!", 500));
   }
 
   place.title = title;
@@ -141,9 +119,7 @@ async function updatePlaceById(req, res, next) {
   try {
     await place.save();
   } catch (err) {
-    const error = new HttpError("Couldn't save place!", 500);
-
-    return next(error);
+    return next(error(("Couldn't save place!", 500)));
   }
 
   res.status(200).json({ place: place.toObject({ getters: true }) });
@@ -156,15 +132,11 @@ async function deletePlaceById(req, res, next) {
   try {
     place = await Place.findById(placeId).populate("creator");
   } catch (err) {
-    const error = new HttpError("Couldn't find place for the given ID!", 500);
-
-    return next(error);
+    return next(error(("Couldn't find place for the given ID!", 500)));
   }
 
   if (!place) {
-    const error = new HttpError("Couldn't find place for the given ID!", 500);
-
-    return next(error);
+    return next(error(("Couldn't find place for the given ID!", 500)));
   }
 
   try {
@@ -178,12 +150,14 @@ async function deletePlaceById(req, res, next) {
 
     await session.commitTransaction();
   } catch (err) {
-    const error = new HttpError("Couldn't remove place!", 500);
-
-    return next(error);
+    return next(error(("Couldn't remove place!", 500)));
   }
 
   res.status(200).json({ message: "Deleted place!" });
+}
+
+function error(message, code) {
+  return new HttpError(message, code);
 }
 
 exports.getPlaceById = getPlaceById;
