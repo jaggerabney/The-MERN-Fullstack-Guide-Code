@@ -11,7 +11,7 @@ router.post(
   [
     check("name").not().isEmpty(),
     check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
-    check("password").isLength({ min: 6 }),
+    check("password").isLength({ min: 6 })
   ],
   usersController.signup
 );

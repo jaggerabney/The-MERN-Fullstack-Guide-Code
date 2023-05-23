@@ -2,62 +2,81 @@ const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const User = require("../models/user");
 
 let dummyUsers = [
   {
     name: "Jagger",
     email: "test@test.com",
     password: "password",
-    loggedIn: false,
+    loggedIn: false
   },
   {
     name: "Kira",
     email: "test2@test.com",
     password: "password2",
-    loggedIn: false,
-  },
+    loggedIn: false
+  }
 ];
 
 function getUsers(req, res, next) {
   res.status(200).json({ users: dummyUsers });
 }
 
-function signup(req, res, next) {
+async function signup(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log(errors);
+    const error = new HttpError("Invalid information!", 422);
 
-    throw new HttpError("Invalid information!", 422);
+    return next(error);
   }
 
-  const { name, email, password } = req.body;
-  const userAlreadyExists = dummyUsers.find((user) => user.email == email);
+  const { name, email, password, image, places } = req.body;
+  let existingUser;
 
-  if (userAlreadyExists) {
-    throw new HttpError(
-      "The provided email address already belongs to an account.",
-      422
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (err) {
+    const error = new HttpError(
+      "Couldn't query database for the given email!",
+      500
     );
+
+    return next(error);
   }
 
-  const newUser = {
-    id: uuid(),
+  if (existingUser) {
+    const error = HttpError(
+      "The provided email already belongs to an account."
+    );
+
+    return next(error);
+  }
+
+  const createdUser = new User({
     name,
     email,
     password,
-    loggedIn: false,
-  };
+    image,
+    places
+  });
 
-  dummyUsers.push(newUser);
+  try {
+    await createdUser.save();
+  } catch (err) {
+    const error = new HttpError("Couldn't save user to database!", 500);
 
-  res.status(201).json({ user: newUser });
+    return next(error);
+  }
+
+  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 }
 
 function login(req, res, next) {
   const { email, password } = req.body;
   const targetUser = {
-    ...dummyUsers.find((user) => user.email === email),
+    ...dummyUsers.find((user) => user.email === email)
   };
 
   if (!targetUser || targetUser.password !== password) {

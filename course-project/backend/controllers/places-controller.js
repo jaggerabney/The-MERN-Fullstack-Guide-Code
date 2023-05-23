@@ -1,25 +1,8 @@
-const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const Place = require("../models/place");
 const HttpError = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
-
-let DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg",
-    address: "20 W 34th St, New York, NY 10001",
-    location: {
-      lat: 40.74861523068957,
-      lng: -73.98524597764153
-    },
-    creator: "u1"
-  }
-];
 
 async function getPlaceById(req, res, next) {
   const { placeId } = req.params;
@@ -75,9 +58,9 @@ async function createPlace(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log(errors);
+    const error = new HttpError("Invalid information!", 422);
 
-    return next(new HttpError("Invalid information!", 422));
+    return next(error);
   }
 
   const { title, description, address, image, creator } = req.body;
