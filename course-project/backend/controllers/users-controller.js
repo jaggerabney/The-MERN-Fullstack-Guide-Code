@@ -73,14 +73,22 @@ async function signup(req, res, next) {
   res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 }
 
-function login(req, res, next) {
+async function login(req, res, next) {
   const { email, password } = req.body;
-  const targetUser = {
-    ...dummyUsers.find((user) => user.email === email)
-  };
+  let existingUser;
 
-  if (!targetUser || targetUser.password !== password) {
-    throw new HttpError("Invalid email or password!", 401);
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (err) {
+    const error = new HttpError("Couldn't query database!", 500);
+
+    return next(error);
+  }
+
+  if (!existingUser || existingUser.password !== password) {
+    const error = new HttpError("Username or password is incorrect!", 500);
+
+    return next(error);
   }
 
   res.status(200).json({ message: "Logged user in!" });
