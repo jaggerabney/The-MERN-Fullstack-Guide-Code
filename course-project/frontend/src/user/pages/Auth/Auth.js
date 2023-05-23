@@ -36,12 +36,38 @@ function Auth() {
 
   async function submitHandler(event) {
     event.preventDefault();
+    setIsLoading(true);
 
     if (isLoginMode) {
+      try {
+        const response = await fetch("http://localhost:5000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value
+          })
+        });
+
+        const resData = await response.json();
+        console.log(resData.message);
+
+        if (!response.ok) {
+          throw new Error(resData.message);
+        }
+
+        setIsLoading(false);
+        authContext.login();
+      } catch (error) {
+        setIsLoading(false);
+        setError(error.message || "An error occurred!");
+
+        console.log(error);
+      }
     } else {
       try {
-        setIsLoading(true);
-
         const response = await fetch("http://localhost:5000/api/users/signup", {
           method: "POST",
           headers: {
