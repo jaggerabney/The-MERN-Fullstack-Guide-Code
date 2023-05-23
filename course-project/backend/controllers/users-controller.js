@@ -1,26 +1,22 @@
-const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
 
-let dummyUsers = [
-  {
-    name: "Jagger",
-    email: "test@test.com",
-    password: "password",
-    loggedIn: false
-  },
-  {
-    name: "Kira",
-    email: "test2@test.com",
-    password: "password2",
-    loggedIn: false
-  }
-];
+async function getUsers(req, res, next) {
+  let users;
 
-function getUsers(req, res, next) {
-  res.status(200).json({ users: dummyUsers });
+  try {
+    users = await User.find({}, "-password");
+  } catch (err) {
+    const error = new HttpError("Couldn't retrieve users!", 500);
+
+    return next(error);
+  }
+
+  res
+    .status(200)
+    .json({ users: users.map((user) => user.toObject({ getters: true })) });
 }
 
 async function signup(req, res, next) {
