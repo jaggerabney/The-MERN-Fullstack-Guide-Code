@@ -8,7 +8,7 @@ import LoadingSpinner from "../../../shared/components/UI/LoadingSpinner/Loading
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE
+  VALIDATOR_REQUIRE,
 } from "../../../shared/util/validators";
 import useForm from "../../../shared/hooks/form-hook";
 import { AuthContext } from "../../../shared/contexts/auth-context";
@@ -24,12 +24,12 @@ function Auth() {
     {
       email: {
         value: "",
-        isValid: false
+        isValid: false,
       },
       password: {
         value: "",
-        isValid: false
-      }
+        isValid: false,
+      },
     },
     false
   );
@@ -43,12 +43,12 @@ function Auth() {
         const response = await fetch("http://localhost:5000/api/users/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value
-          })
+            password: formState.inputs.password.value,
+          }),
         });
 
         const resData = await response.json();
@@ -71,20 +71,22 @@ function Auth() {
         const response = await fetch("http://localhost:5000/api/users/signup", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
             image:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
-          })
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png",
+          }),
         });
 
         const resData = await response.json();
 
-        if (!resData.ok) {
+        console.log(resData);
+
+        if (!response.ok) {
           throw new Error(resData.message);
         }
 
@@ -104,7 +106,7 @@ function Auth() {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined
+          name: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -114,8 +116,8 @@ function Auth() {
           ...formState.inputs,
           name: {
             value: "",
-            isValid: false
-          }
+            isValid: false,
+          },
         },
         false
       );
