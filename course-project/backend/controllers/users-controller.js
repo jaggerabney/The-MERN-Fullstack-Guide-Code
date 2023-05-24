@@ -44,7 +44,7 @@ async function signup(req, res, next) {
     email,
     password,
     image,
-    places: []
+    places: [],
   });
 
   try {
@@ -67,7 +67,7 @@ async function login(req, res, next) {
   }
 
   if (!existingUser || existingUser.password !== password) {
-    return next(error(("Username or password is incorrect!", 500)));
+    return next(error("Username or password is incorrect!", 401));
   }
 
   res.status(200).json({ message: "Logged user in!" });
