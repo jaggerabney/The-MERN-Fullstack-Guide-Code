@@ -91,7 +91,7 @@ function PlaceItem(props) {
             <Button onClick={toggleMapHandler} inverse>
               View on map
             </Button>
-            {authContext.isLoggedIn && (
+            {authContext.userId === props.creatorId && (
               <>
                 <Button to={`/places/${props.id}`}>Edit</Button>
                 <Button onClick={toggleShowDeleteModalHandler} danger>
