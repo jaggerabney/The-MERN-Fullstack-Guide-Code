@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 
-const { error } = require("../models/http-error");
+const error = require("../models/http-error");
 const User = require("../models/user");
 
 async function getUsers(req, res, next) {
@@ -70,7 +70,10 @@ async function login(req, res, next) {
     return next(error("Username or password is incorrect!", 401));
   }
 
-  res.status(200).json({ message: "Logged user in!" });
+  res.status(200).json({
+    message: "Logged user in!",
+    user: existingUser.toObject({ getters: true }),
+  });
 }
 
 exports.getUsers = getUsers;

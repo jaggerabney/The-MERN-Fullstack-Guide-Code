@@ -41,7 +41,7 @@ function Auth() {
       try {
         const data = await sendRequest(
           "http://localhost:5000/api/users/login",
-          "GET",
+          "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
@@ -51,13 +51,11 @@ function Auth() {
           }
         );
 
-        console.log(data);
-
         if (error) {
           throw new Error(error);
         }
 
-        authContext.login();
+        authContext.login(data.user.id);
       } catch (error) {
         console.log(error);
       }

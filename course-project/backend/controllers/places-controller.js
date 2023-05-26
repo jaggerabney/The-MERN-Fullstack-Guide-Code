@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 
 const Place = require("../models/place");
 const User = require("../models/user");
-const { error } = require("../models/http-error");
+const error = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
 
 async function getPlaceById(req, res, next) {
@@ -40,7 +40,7 @@ async function getPlacesByUserId(req, res, next) {
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true }))
+    places: places.map((place) => place.toObject({ getters: true })),
   });
 }
 
@@ -56,8 +56,8 @@ async function createPlace(req, res, next) {
 
   try {
     coordinates = await getCoordinatesFromAddress(address);
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(error("The entered address is not a valid address!", 406));
   }
 
   const createdPlace = new Place({
@@ -66,7 +66,7 @@ async function createPlace(req, res, next) {
     address,
     location: coordinates,
     image,
-    creator
+    creator,
   });
 
   try {
@@ -89,8 +89,8 @@ async function createPlace(req, res, next) {
     await user.save({ session });
 
     await session.commitTransaction();
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(error("Couldn't write data to database!", 500));
   }
 
   res.status(201).json({ place: createdPlace });
