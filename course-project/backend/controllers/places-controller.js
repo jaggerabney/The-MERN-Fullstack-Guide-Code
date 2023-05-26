@@ -32,11 +32,11 @@ async function getPlacesByUserId(req, res, next) {
 
     places = user.places;
   } catch (err) {
-    return next(error(("Couldn't find places for the given user ID!", 404)));
+    return next(error("Couldn't fetch places for the given user ID!", 404));
   }
 
-  if (!places || places.length < 1) {
-    return next(error(("Couldn't find places for the given user ID!", 404)));
+  if (!places) {
+    return next(error("Couldn't fetch places for the given user ID!", 404));
   }
 
   res.json({
