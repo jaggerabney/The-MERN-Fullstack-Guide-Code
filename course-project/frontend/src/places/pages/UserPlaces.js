@@ -27,6 +27,12 @@ function UserPlaces() {
     fetchPlaces();
   }, [sendRequest, userId]);
 
+  function deletePlaceHandler(placeId) {
+    setPlaces((prevPlaces) =>
+      prevPlaces.filter((place) => place.id !== placeId)
+    );
+  }
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -35,7 +41,10 @@ function UserPlaces() {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && places && <PlaceList items={places} />};
+      {!isLoading && places && (
+        <PlaceList items={places} onDelete={deletePlaceHandler} />
+      )}
+      ;
     </>
   );
 }
