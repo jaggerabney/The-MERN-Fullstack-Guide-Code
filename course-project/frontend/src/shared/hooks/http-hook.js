@@ -22,16 +22,22 @@ export default function useHttp() {
         });
         const data = await response.json();
 
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          (controller) => controller !== httpAbortController
+        );
+
         if (!response.ok) {
           throw new Error(data.message);
         }
 
+        setIsLoading(false);
         return data;
       } catch (error) {
         setError(error.message);
-      }
+        setIsLoading(false);
 
-      setIsLoading(false);
+        throw error;
+      }
     },
     []
   );
