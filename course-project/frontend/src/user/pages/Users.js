@@ -4,42 +4,29 @@ import Card from "../../shared/components/UI/Card/Card";
 import UsersList from "../components/UsersList";
 import ErrorModal from "../../shared/components/UI/ErrorModal/ErrorModal";
 import LoadingSpinner from "../../shared/components/UI/LoadingSpinner/LoadingSpinner";
+import useHttp from "../../shared/hooks/http-hook";
 
 function Users() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const { isLoading, error, sendRequest, clearError } = useHttp();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    async function sendRequest() {
-      setIsLoading(true);
-
+    async function fetchUsers() {
       try {
-        const response = await fetch("http://localhost:5000/api/users");
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message);
-        }
+        const data = await sendRequest("http://localhost:5000/api/users");
 
         setUsers(data.users);
       } catch (error) {
         console.log(error);
       }
-
-      setIsLoading(false);
     }
 
-    sendRequest();
-  }, []);
-
-  function errorHandler() {
-    setError(null);
-  }
+    fetchUsers();
+  }, [sendRequest]);
 
   return (
     <div className="center">
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       {isLoading && (
         <div className="center">
           <LoadingSpinner />
