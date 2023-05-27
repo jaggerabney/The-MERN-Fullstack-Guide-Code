@@ -5,10 +5,11 @@ import Input from "../../../shared/components/FormElements/Input/Input";
 import Button from "../../../shared/components/FormElements/Button/Button";
 import ErrorModal from "../../../shared/components/UI/ErrorModal/ErrorModal";
 import LoadingSpinner from "../../../shared/components/UI/LoadingSpinner/LoadingSpinner";
+import ImageUpload from "../../../shared/components/FormElements/ImageUpload/ImageUpload";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
+  VALIDATOR_REQUIRE
 } from "../../../shared/util/validators";
 import useForm from "../../../shared/hooks/form-hook";
 import useHttp from "../../../shared/hooks/http-hook";
@@ -24,12 +25,12 @@ function Auth() {
     {
       email: {
         value: "",
-        isValid: false,
+        isValid: false
       },
       password: {
         value: "",
-        isValid: false,
-      },
+        isValid: false
+      }
     },
     false
   );
@@ -44,10 +45,10 @@ function Auth() {
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
+            password: formState.inputs.password.value
           }),
           {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           }
         );
 
@@ -69,10 +70,10 @@ function Auth() {
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
             image:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png",
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
           }),
           {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           }
         );
 
@@ -94,7 +95,7 @@ function Auth() {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined,
+          name: undefined
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -104,8 +105,8 @@ function Auth() {
           ...formState.inputs,
           name: {
             value: "",
-            isValid: false,
-          },
+            isValid: false
+          }
         },
         false
       );
@@ -133,6 +134,7 @@ function Auth() {
               onInput={inputHandler}
             />
           )}
+          {!isLoginMode && <ImageUpload id="image" center />}
           <Input
             id="email"
             element="input"
