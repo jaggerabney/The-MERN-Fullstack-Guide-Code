@@ -38,11 +38,9 @@ function Auth() {
   async function submitHandler(event) {
     event.preventDefault();
 
-    console.log(formState.inputs);
-
     if (isLoginMode) {
       try {
-        const data = await sendRequest(
+        const response = await sendRequest(
           "http://localhost:5000/api/users/login",
           "POST",
           JSON.stringify({
@@ -58,7 +56,7 @@ function Auth() {
           throw new Error(error);
         }
 
-        authContext.login(data.user.id);
+        authContext.login(response.userId, response.token);
       } catch (error) {
         console.log(error);
       }
@@ -71,7 +69,7 @@ function Auth() {
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
 
-        await sendRequest(
+        const response = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
           formData
@@ -81,7 +79,7 @@ function Auth() {
           throw new Error(error);
         }
 
-        authContext.login();
+        authContext.login(response.userId, response.token);
       } catch (error) {
         console.log(error);
       }
