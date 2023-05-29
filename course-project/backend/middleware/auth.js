@@ -15,7 +15,7 @@ function isAuth(req, res, next) {
       throw new Error();
     }
 
-    req.userId = jwt.verify(token, process.env.JWT_KEY);
+    req.user = jwt.verify(token, process.env.JWT_KEY);
 
     next();
   } catch (err) {

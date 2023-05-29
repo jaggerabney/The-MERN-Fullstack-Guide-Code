@@ -117,6 +117,10 @@ async function updatePlaceById(req, res, next) {
     return next(error("Couldn't find place!", 500));
   }
 
+  if (place.creator.toString() !== req.user.userId) {
+    return next(error("You can't edit places that don't belong to you!", 401));
+  }
+
   place.title = title;
   place.description = description;
 
