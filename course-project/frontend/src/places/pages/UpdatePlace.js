@@ -94,6 +94,7 @@ function UpdatePlace() {
         }),
         {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${authContext.token}`,
         }
       );
     } catch (error) {
