@@ -147,7 +147,11 @@ async function deletePlaceById(req, res, next) {
     return next(error(("Couldn't find place for the given ID!", 500)));
   }
 
-  const imagePath = place.image;
+  if (place.creator.id !== req.user.userId) {
+    return next(
+      error("You can't delete places that don't belong to you!", 401)
+    );
+  }
 
   try {
     const session = await mongoose.startSession();
@@ -163,7 +167,7 @@ async function deletePlaceById(req, res, next) {
     return next(error(("Couldn't remove place!", 500)));
   }
 
-  fs.unlink(imagePath, (error) => console.log(error));
+  fs.unlink(place.image, (error) => console.log(error));
 
   res.status(200).json({ message: "Deleted place!" });
 }

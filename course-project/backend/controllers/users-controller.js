@@ -95,7 +95,7 @@ async function login(req, res, next) {
   }
 
   if (!existingUser) {
-    return next(error("Username or password is incorrect!", 401));
+    return next(error("Username or password is incorrect!", 403));
   }
 
   try {
@@ -105,7 +105,7 @@ async function login(req, res, next) {
   }
 
   if (!passwordsMatch) {
-    return next(error("Username or password is incorrect!", 401));
+    return next(error("Username or password is incorrect!", 403));
   }
 
   try {

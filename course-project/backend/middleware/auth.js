@@ -19,7 +19,7 @@ function isAuth(req, res, next) {
 
     next();
   } catch (err) {
-    return next(error("Authentication failed!", 401));
+    return next(error("Authentication failed!", 403));
   }
 }
 
