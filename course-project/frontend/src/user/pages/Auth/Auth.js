@@ -9,7 +9,7 @@ import ImageUpload from "../../../shared/components/FormElements/ImageUpload/Ima
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE
+  VALIDATOR_REQUIRE,
 } from "../../../shared/util/validators";
 import useForm from "../../../shared/hooks/form-hook";
 import useHttp from "../../../shared/hooks/http-hook";
@@ -25,18 +25,20 @@ function Auth() {
     {
       email: {
         value: "",
-        isValid: false
+        isValid: false,
       },
       password: {
         value: "",
-        isValid: false
-      }
+        isValid: false,
+      },
     },
     false
   );
 
   async function submitHandler(event) {
     event.preventDefault();
+
+    console.log(formState.inputs);
 
     if (isLoginMode) {
       try {
@@ -45,10 +47,10 @@ function Auth() {
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value
+            password: formState.inputs.password.value,
           }),
           {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           }
         );
 
@@ -70,10 +72,10 @@ function Auth() {
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
             image:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png",
           }),
           {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           }
         );
 
@@ -95,7 +97,8 @@ function Auth() {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined
+          name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -105,8 +108,12 @@ function Auth() {
           ...formState.inputs,
           name: {
             value: "",
-            isValid: false
-          }
+            isValid: false,
+          },
+          image: {
+            value: null,
+            isValid: false,
+          },
         },
         false
       );
@@ -134,7 +141,9 @@ function Auth() {
               onInput={inputHandler}
             />
           )}
-          {!isLoginMode && <ImageUpload id="image" center />}
+          {!isLoginMode && (
+            <ImageUpload id="image" center onInput={inputHandler} />
+          )}
           <Input
             id="email"
             element="input"
