@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 
 import MainNavigation from "./shared/components/Navigation/MainNavigation/MainNavigation";
@@ -12,18 +12,35 @@ import { AuthContext } from "./shared/contexts/auth-context";
 function App() {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(null);
+  let routes;
 
   const login = useCallback((userId, token) => {
     setToken(token);
     setUserId(userId);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        userId,
+        token,
+      })
+    );
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+
+    localStorage.removeItem("user");
   }, []);
 
-  let routes;
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("user"));
+
+    if (data && data.token) {
+      login(data.userId, data.token);
+    }
+  }, [login]);
 
   if (token) {
     routes = (
