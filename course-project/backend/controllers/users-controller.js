@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 
 const error = require("../models/http-error");
 const User = require("../models/user");
@@ -25,8 +26,7 @@ async function signup(req, res, next) {
   }
 
   const { name, email, password } = req.body;
-
-  let existingUser;
+  let existingUser, hashedPassword;
 
   try {
     existingUser = await User.findOne({ email });
@@ -40,10 +40,16 @@ async function signup(req, res, next) {
     );
   }
 
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    return next(error("Couldn't create user! Please try again later.", 500));
+  }
+
   const createdUser = new User({
     name,
     email,
-    password,
+    password: hashedPassword,
     image: req.file.path,
     places: [],
   });
@@ -59,7 +65,8 @@ async function signup(req, res, next) {
 
 async function login(req, res, next) {
   const { email, password } = req.body;
-  let existingUser;
+  let existingUser,
+    passwordsMatch = false;
 
   try {
     existingUser = await User.findOne({ email });
@@ -67,7 +74,17 @@ async function login(req, res, next) {
     return next(error("Couldn't query database!", 500));
   }
 
-  if (!existingUser || existingUser.password !== password) {
+  if (!existingUser) {
+    return next(error("Username or password is incorrect!", 401));
+  }
+
+  try {
+    passwordsMatch = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    return next(error("Couldn't log in! Please try again later.", 500));
+  }
+
+  if (!passwordsMatch) {
     return next(error("Username or password is incorrect!", 401));
   }
 
