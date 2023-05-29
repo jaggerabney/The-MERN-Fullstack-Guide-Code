@@ -13,7 +13,7 @@ function UserItem(props) {
         <Link to={`/${props.id}/places`}>
           <div className={classes["user-item__image"]}>
             <Avatar
-              image={`http://lcaolhost:5000/${props.image}`}
+              image={`http://localhost:5000/${props.image}`}
               alt={props.name}
             />
           </div>
