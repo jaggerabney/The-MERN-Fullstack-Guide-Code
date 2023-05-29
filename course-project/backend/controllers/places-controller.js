@@ -51,12 +51,14 @@ async function createPlace(req, res, next) {
     return next(error("Invalid information!", 422));
   }
 
-  const { title, description, address, image, creator } = req.body;
+  const { title, description, address, creator } = req.body;
   let coordinates, user;
 
   try {
     coordinates = await getCoordinatesFromAddress(address);
   } catch (err) {
+    console.log(err);
+
     return next(error("The entered address is not a valid address!", 406));
   }
 
@@ -65,7 +67,7 @@ async function createPlace(req, res, next) {
     description,
     address,
     location: coordinates,
-    image,
+    image: req.file.path,
     creator,
   });
 
