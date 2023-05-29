@@ -24,7 +24,8 @@ async function signup(req, res, next) {
     return next(error("Invalid information!", 422));
   }
 
-  const { name, email, password, image } = req.body;
+  const { name, email, password } = req.body;
+
   let existingUser;
 
   try {
@@ -43,7 +44,7 @@ async function signup(req, res, next) {
     name,
     email,
     password,
-    image,
+    image: req.file.path,
     places: [],
   });
 
