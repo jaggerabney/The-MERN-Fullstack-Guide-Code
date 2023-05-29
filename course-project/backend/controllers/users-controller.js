@@ -1,8 +1,10 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-const error = require("../models/http-error");
 const User = require("../models/user");
+const error = require("../models/http-error");
 
 async function getUsers(req, res, next) {
   let users;
@@ -26,12 +28,12 @@ async function signup(req, res, next) {
   }
 
   const { name, email, password } = req.body;
-  let existingUser, hashedPassword;
+  let existingUser, hashedPassword, token;
 
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    return next(error("Couldn't query the database for the given email!", 500));
+    return next(error("Couldn't create user! Please try again later.", 500));
   }
 
   if (existingUser) {
@@ -57,15 +59,33 @@ async function signup(req, res, next) {
   try {
     await createdUser.save();
   } catch (err) {
-    return next(error("Couldn't save user to database!", 500));
+    return next(error("Couldn't create user! Please try again later.", 500));
   }
 
-  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
+  try {
+    token = jwt.sign(
+      {
+        userId: createdUser.id,
+        email: createdUser.email,
+      },
+      process.env.JWT_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+  } catch (err) {
+    return next(error("Couldn't create user! Please try again later.", 500));
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token });
 }
 
 async function login(req, res, next) {
   const { email, password } = req.body;
   let existingUser,
+    token,
     passwordsMatch = false;
 
   try {
@@ -88,9 +108,26 @@ async function login(req, res, next) {
     return next(error("Username or password is incorrect!", 401));
   }
 
+  try {
+    token = jwt.sign(
+      {
+        userId: existingUser.id,
+        email: existingUser.email,
+      },
+      process.env.JWT_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+  } catch (err) {
+    return next(error("Couldn't login! Please try again later.", 500));
+  }
+
   res.status(200).json({
     message: "Logged user in!",
-    user: existingUser.toObject({ getters: true }),
+    userId: existingUser.id,
+    email: existingUser.email,
+    token,
   });
 }
 
