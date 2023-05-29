@@ -64,22 +64,18 @@ function Auth() {
       }
     } else {
       try {
-        const data = await sendRequest(
+        const formData = new FormData();
+
+        formData.append("email", formState.inputs.email.value);
+        formData.append("name", formState.inputs.name.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
+
+        await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-            image:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png",
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          formData
         );
-
-        console.log(data);
 
         if (error) {
           throw new Error(error);
