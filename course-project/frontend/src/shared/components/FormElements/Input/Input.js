@@ -34,7 +34,7 @@ function Input(props) {
 
   useEffect(() => {
     onInput(id, value, isValid);
-  }, [id, value, isValid]);
+  }, [id, value, isValid]); // eslint-disable-line
 
   function changeHandler(event) {
     dispatchInput({

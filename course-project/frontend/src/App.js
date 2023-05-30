@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React from "react";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 
 import MainNavigation from "./shared/components/Navigation/MainNavigation/MainNavigation";
@@ -7,61 +7,12 @@ import UserPlaces from "./places/pages/UserPlaces";
 import NewPlace from "./places/pages/NewPlace";
 import UpdatePlace from "./places/pages/UpdatePlace";
 import Auth from "./user/pages/Auth/Auth";
+import useAuth from "./shared/hooks/auth-hook";
 import { AuthContext } from "./shared/contexts/auth-context";
 
-let logoutTimer;
-
 function App() {
-  const [token, setToken] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [tokenExpDate, setTokenExpDate] = useState();
+  const { userId, token, login, logout } = useAuth();
   let routes;
-
-  const login = useCallback((userId, token, expDate) => {
-    const tokenExpDate =
-      expDate || new Date(new Date().getTime() + 1000 * 60 * 60);
-
-    setToken(token);
-    setUserId(userId);
-    setTokenExpDate(tokenExpDate);
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        userId,
-        token,
-        expiration: tokenExpDate.toISOString(),
-      })
-    );
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUserId(null);
-    setTokenExpDate(null);
-
-    localStorage.removeItem("user");
-  }, []);
-
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("user"));
-    const tokenExpirationDate = data && data.expiration;
-    const now = new Date();
-
-    if (data && data.token && tokenExpirationDate > now) {
-      login(data.userId, data.token);
-    }
-  }, [login]);
-
-  useEffect(() => {
-    if (token && tokenExpDate) {
-      const remainingTime = tokenExpDate.getTime() - new Date().getTime();
-
-      logoutTimer = setTimeout(logout, remainingTime);
-    } else {
-      clearTimeout(logoutTimer);
-    }
-  }, [token, logout, tokenExpDate]);
 
   if (token) {
     routes = (

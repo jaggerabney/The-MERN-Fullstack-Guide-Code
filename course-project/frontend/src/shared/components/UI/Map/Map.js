@@ -9,6 +9,7 @@ function Map(props) {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   });
 
+  // eslint-disable-next-line
   const [map, setMap] = React.useState(null);
 
   const onLoad = React.useCallback(function callback(map) {
