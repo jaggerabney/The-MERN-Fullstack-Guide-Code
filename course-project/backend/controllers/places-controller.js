@@ -53,7 +53,7 @@ async function createPlace(req, res, next) {
     return next(error("Invalid information!", 422));
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address } = req.body;
   let coordinates, user;
 
   try {
@@ -70,11 +70,11 @@ async function createPlace(req, res, next) {
     address,
     location: coordinates,
     image: req.file.path,
-    creator,
+    creator: req.user.userId,
   });
 
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.user.userId);
   } catch (err) {
     return next(error("Place creation failed!", 500));
   }
