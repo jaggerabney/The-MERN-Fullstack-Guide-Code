@@ -12,9 +12,11 @@ function Users() {
 
   useEffect(() => {
     async function fetchUsers() {
+      console.log(`${process.env.REACT_APP_BACKEND_URL}/users`);
+
       try {
         const data = await sendRequest(
-          "process.env.REACT_APP_BACKEND_URLusers"
+          `${process.env.REACT_APP_BACKEND_URL}/users`
         );
 
         setUsers(data.users);
