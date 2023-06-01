@@ -42,7 +42,7 @@ async function getPlacesByUserId(req, res, next) {
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true })),
+    places: places.map((place) => place.toObject({ getters: true }))
   });
 }
 
@@ -59,8 +59,6 @@ async function createPlace(req, res, next) {
   try {
     coordinates = await getCoordinatesFromAddress(address);
   } catch (err) {
-    console.log(err);
-
     return next(error("The entered address is not a valid address!", 406));
   }
 
@@ -70,7 +68,7 @@ async function createPlace(req, res, next) {
     address,
     location: coordinates,
     image: req.file.path,
-    creator: req.user.userId,
+    creator: req.user.userId
   });
 
   try {
