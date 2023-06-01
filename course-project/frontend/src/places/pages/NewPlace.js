@@ -11,7 +11,7 @@ import useHttp from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/contexts/auth-context";
 import {
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
+  VALIDATOR_REQUIRE
 } from "../../shared/util/validators";
 
 import classes from "./PlaceForm.module.css";
@@ -24,20 +24,20 @@ function NewPlace() {
     {
       title: {
         value: "",
-        isValid: false,
+        isValid: false
       },
       description: {
         value: "",
-        isValid: false,
+        isValid: false
       },
       address: {
         value: "",
-        isValid: false,
+        isValid: false
       },
       image: {
         value: null,
-        isValid: false,
-      },
+        isValid: false
+      }
     },
     false
   );
@@ -53,9 +53,14 @@ function NewPlace() {
       formData.append("address", formState.inputs.address.value);
       formData.append("image", formState.inputs.image.value);
 
-      await sendRequest("http://localhost:5000/api/places", "POST", formData, {
-        Authorization: `Bearer ${authContext.token}`,
-      });
+      await sendRequest(
+        "process.env.REACT_APP_BACKEND_URLplaces",
+        "POST",
+        formData,
+        {
+          Authorization: `Bearer ${authContext.token}`
+        }
+      );
 
       history.push("/");
     } catch (error) {

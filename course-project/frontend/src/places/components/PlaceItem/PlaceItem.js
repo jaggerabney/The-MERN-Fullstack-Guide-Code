@@ -30,11 +30,11 @@ function PlaceItem(props) {
 
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
+        `process.env.REACT_APP_BACKEND_URLplaces/${props.id}`,
         "DELETE",
         null,
         {
-          Authorization: `Bearer ${authContext.token}`,
+          Authorization: `Bearer ${authContext.token}`
         }
       );
 
@@ -85,7 +85,7 @@ function PlaceItem(props) {
           {isLoading && <LoadingSpinner asOverlay />}
           <div className={classes["place-item__image"]}>
             <img
-              src={`http://localhost:5000/${props.image}`}
+              src={`process.env.REACT_APP_ASSET_URL/${props.image}`}
               alt={props.title}
             />
           </div>

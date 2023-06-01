@@ -9,7 +9,7 @@ import ImageUpload from "../../../shared/components/FormElements/ImageUpload/Ima
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
+  VALIDATOR_REQUIRE
 } from "../../../shared/util/validators";
 import useForm from "../../../shared/hooks/form-hook";
 import useHttp from "../../../shared/hooks/http-hook";
@@ -25,12 +25,12 @@ function Auth() {
     {
       email: {
         value: "",
-        isValid: false,
+        isValid: false
       },
       password: {
         value: "",
-        isValid: false,
-      },
+        isValid: false
+      }
     },
     false
   );
@@ -41,14 +41,14 @@ function Auth() {
     if (isLoginMode) {
       try {
         const response = await sendRequest(
-          "http://localhost:5000/api/users/login",
+          "process.env.REACT_APP_BACKEND_URLusers/login",
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
+            password: formState.inputs.password.value
           }),
           {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           }
         );
 
@@ -70,7 +70,7 @@ function Auth() {
         formData.append("image", formState.inputs.image.value);
 
         const response = await sendRequest(
-          "http://localhost:5000/api/users/signup",
+          "process.env.REACT_APP_BACKEND_URLusers/signup",
           "POST",
           formData
         );
@@ -92,7 +92,7 @@ function Auth() {
         {
           ...formState.inputs,
           name: undefined,
-          image: undefined,
+          image: undefined
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -102,12 +102,12 @@ function Auth() {
           ...formState.inputs,
           name: {
             value: "",
-            isValid: false,
+            isValid: false
           },
           image: {
             value: null,
-            isValid: false,
-          },
+            isValid: false
+          }
         },
         false
       );
