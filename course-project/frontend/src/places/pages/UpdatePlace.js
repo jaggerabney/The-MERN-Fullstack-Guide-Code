@@ -9,7 +9,7 @@ import useForm from "../../shared/hooks/form-hook";
 import useHttp from "../../shared/hooks/http-hook";
 import {
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
+  VALIDATOR_REQUIRE
 } from "../../shared/util/validators";
 import { AuthContext } from "../../shared/contexts/auth-context";
 
@@ -26,19 +26,19 @@ function UpdatePlace() {
   const [formState, inputHandler, setFormData] = useForm({
     title: {
       value: "",
-      isValid: false,
+      isValid: false
     },
     description: {
       value: "",
-      isValid: false,
-    },
+      isValid: false
+    }
   });
 
   useEffect(() => {
     async function fetchPlace() {
       try {
         const data = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`
         );
 
         setPlace(data.place);
@@ -46,12 +46,12 @@ function UpdatePlace() {
           {
             title: {
               value: data.place.title,
-              isValid: true,
+              isValid: true
             },
             description: {
               value: data.place.description,
-              isValid: true,
-            },
+              isValid: true
+            }
           },
           true
         );
@@ -86,15 +86,15 @@ function UpdatePlace() {
 
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${placeId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`,
         "PATCH",
         JSON.stringify({
           title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
+          description: formState.inputs.description.value
         }),
         {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authContext.token}`,
+          Authorization: `Bearer ${authContext.token}`
         }
       );
     } catch (error) {

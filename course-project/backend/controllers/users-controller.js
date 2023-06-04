@@ -53,7 +53,7 @@ async function signup(req, res, next) {
     email,
     password: hashedPassword,
     image: req.file.path,
-    places: [],
+    places: []
   });
 
   try {
@@ -66,11 +66,11 @@ async function signup(req, res, next) {
     token = jwt.sign(
       {
         userId: createdUser.id,
-        email: createdUser.email,
+        email: createdUser.email
       },
       process.env.JWT_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "1h"
       }
     );
   } catch (err) {
@@ -112,11 +112,11 @@ async function login(req, res, next) {
     token = jwt.sign(
       {
         userId: existingUser.id,
-        email: existingUser.email,
+        email: existingUser.email
       },
       process.env.JWT_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "1h"
       }
     );
   } catch (err) {
@@ -127,7 +127,7 @@ async function login(req, res, next) {
     message: "Logged user in!",
     userId: existingUser.id,
     email: existingUser.email,
-    token,
+    token
   });
 }
 
