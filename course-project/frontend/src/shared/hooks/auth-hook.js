@@ -36,8 +36,6 @@ export default function useAuth() {
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("user"));
 
-    console.log(data);
-
     const tokenExpirationDate = data && new Date(data.expiration).getTime();
     const now = new Date().getTime();
 
@@ -49,8 +47,6 @@ export default function useAuth() {
   useEffect(() => {
     if (token && tokenExpDate) {
       const remainingTime = tokenExpDate.getTime() - new Date().getTime();
-
-      console.log(remainingTime);
 
       logoutTimer = setTimeout(logout, remainingTime);
     } else {

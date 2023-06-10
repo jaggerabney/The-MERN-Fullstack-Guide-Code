@@ -34,7 +34,7 @@ function PlaceItem(props) {
         "DELETE",
         null,
         {
-          Authorization: `Bearer ${authContext.token}`
+          Authorization: `Bearer ${authContext.token}`,
         }
       );
 

@@ -8,7 +8,6 @@ require("dotenv").config();
 
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
-const keysRoutes = require("./routes/keys-routes");
 
 const HttpError = require("./models/http-error");
 
@@ -30,7 +29,6 @@ app.use((req, res, next) => {
 
 app.use("/api/places", placesRoutes);
 app.use("/api/users", usersRoutes);
-app.use("/api/keys", keysRoutes);
 
 app.use((req, res, next) => {
   throw new HttpError("Couldn't find route!", 404);
