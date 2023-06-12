@@ -8,7 +8,6 @@ require("dotenv").config();
 
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
-
 const HttpError = require("./models/http-error");
 
 const app = express();
